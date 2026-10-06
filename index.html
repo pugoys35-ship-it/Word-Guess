@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body>
+
+    <div id="app">
+        <div class="flex justify-center mt-20">
+            <div class="absolute right-0">
+                <img src="https://i.pinimg.com/736x/68/ea/f4/68eaf4112c362f42b4e6ef65cb8c3969.jpg" alt="">
+            </div>
+           
+            <div class="absolute left-0 bottom-0">
+                <img src="https://i.pinimg.com/originals/3d/53/e7/3d53e71011c2792de9fd6c82e9396730.gif" alt="">
+            </div>
+            <div class="relative">
+                <div>
+                    <h1 class="text-center text-5xl mb-5">
+                        {{display.join(" ")}}
+                    </h1>
+                </div>
+                <div v-for="(row, i) in letters" :key="i" class="flex justify-center gap-3 mb-3">
+                    <div v-for="letter in row" :key="letter" @click="press(letter)"
+                        :class="['border rounded-lg border text-black text-3xl p-5 cursor-pointer hover:bg-gray-200 duration-500',
+                        usedLetters.includes(letter)
+                        ? 'text-gray-300 cursor-not-allowed'
+                        : 'bg-transparent cursor-pointer'
+                        ]">
+                        {{letter}}
+                    </div>
+                </div>
+                <div class="flex items-center w-full justify-center mt-5">
+                    <button @click="resetGame()" class="border rounded-lg cursor-pointer hover:bg-gray-200 duration-500 px-5 py-2">Restart</button>
+                </div>
+                <div class="flex items-center w-full justify-center mt-5">
+                    <h1 class="text-3xl text-blue-500 font-bold">{{message}}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        Vue.createApp({
+            data() {
+                return {
+                    letters: [
+                        ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
+                        ["A", "S", "D", "F", "G", "H", "J", "K", "L",],
+                        ["Z", "X", "C", "V", "B", "N", "M"],
+                    ],
+                    display: ["_", "_", "_", "_", "_"],
+                    words: ["TIGER", "SPEED", "COLOR", "APPLE", "MELON"],
+                    randomValue: "",
+                    usedLetters: [],
+                    message: "",
+                }
+            },
+            methods: {
+                randomWords() {
+                    let random = Math.floor(Math.random() * this.words.length);
+                    return this.words[random];
+                },
+
+                press(letter) {
+                    if (this.usedLetters.includes(letter)) return
+                    this.usedLetters.push(letter);
+                    for (let i = 0; i < this.randomValue.length; i++) {
+                        if (this.randomValue[i] === letter) {
+                            this.display[i] = letter;
+                        }
+                    }
+                    this.isWinner();
+                },
+
+                isWinner() {
+                    if (this.display.join("") === this.randomValue) {
+                        this.message = "You Win!"
+                    }
+                },
+
+                resetGame(){
+                    this.usedLetters = [];
+                    this.message = "";
+                    this.display = ["_", "_", "_", "_", "_"];
+                    this.randomValue = this.randomWords();
+                    console.log(this.randomValue);
+                }
+            },
+            mounted() {
+                this.randomValue = this.randomWords();
+                console.log(this.randomValue);
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
